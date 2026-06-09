@@ -13,6 +13,8 @@ const TYPES = [
   "person_note",
   "reference",
   "decision",
+  "commitment",
+  "question",
   "lesson",
   "meeting",
   "journal",

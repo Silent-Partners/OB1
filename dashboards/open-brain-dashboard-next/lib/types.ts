@@ -23,6 +23,8 @@ export const THOUGHT_TYPES = [
   "reference",
   "person_note",
   "decision",
+  "commitment",
+  "question",
   "lesson",
   "meeting",
   "journal",
