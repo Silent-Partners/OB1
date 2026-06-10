@@ -1,4 +1,4 @@
-export type ThoughtType = 'observation' | 'task' | 'commitment' | 'decision' | 'question' | 'idea' | 'reference' | 'person_note';
+export type ThoughtType = 'observation' | 'task' | 'commitment' | 'decision' | 'question' | 'idea' | 'reference' | 'person_note' | 'bookmark';
 
 export interface ThoughtMetadata {
 	type: ThoughtType;
@@ -25,5 +25,6 @@ export const THOUGHT_TYPES: { value: ThoughtType; label: string; color: string }
 	{ value: 'question', label: 'Question', color: 'question' },
 	{ value: 'idea', label: 'Idea', color: 'idea' },
 	{ value: 'reference', label: 'Reference', color: 'reference' },
-	{ value: 'person_note', label: 'Person Note', color: 'person-note' }
+	{ value: 'person_note', label: 'Person Note', color: 'person-note' },
+	{ value: 'bookmark', label: 'Bookmark', color: 'bookmark' }
 ];

@@ -25,6 +25,7 @@ export const THOUGHT_TYPES = [
   "decision",
   "commitment",
   "question",
+  "bookmark",
   "lesson",
   "meeting",
   "journal",

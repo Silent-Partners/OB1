@@ -15,6 +15,7 @@ const TYPES = [
   "decision",
   "commitment",
   "question",
+  "bookmark",
   "lesson",
   "meeting",
   "journal",
