@@ -32,11 +32,11 @@ export function SearchBar({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 px-4 py-2.5 bg-bg-surface border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition"
+          className="flex-1 px-4 py-2.5 bg-bg-surface border border-border rounded-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition"
         />
         <button
           type="submit"
-          className="px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-medium rounded-lg transition-colors"
+          className="px-5 py-2.5 bg-violet hover:bg-violet-dim text-white font-medium rounded-sm transition-colors"
         >
           Search
         </button>

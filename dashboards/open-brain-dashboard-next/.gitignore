@@ -7,3 +7,7 @@ node_modules/
 next-env.d.ts
 tsconfig.tsbuildinfo
 .vercel
+
+# Local tooling / design-tool output
+.claude/
+.impeccable/

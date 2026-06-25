@@ -1,5 +1,25 @@
+/**
+ * Structured reference/bookmark fields parsed by the gateway from the formatted
+ * text block stored in `content`. Present at `Thought.metadata.parsed` for
+ * reference and bookmark captures only. See open-brain-rest `parseStructured`.
+ */
+export interface ParsedReference {
+  kind: "reference" | "bookmark";
+  unread: boolean;
+  url: string | null;
+  title: string | null;
+  author: string | null;
+  source: string | null;
+  published: string | null;
+  summary: string | null;
+  file: string | null;
+  file_id: string | null;
+  why_saved: string | null;
+}
+
 export interface Thought {
-  id: number;
+  // DB id is a uuid (string), not a number.
+  id: string;
   uuid?: string;
   content: string;
   type: string;
@@ -26,9 +46,6 @@ export const THOUGHT_TYPES = [
   "commitment",
   "question",
   "bookmark",
-  "lesson",
-  "meeting",
-  "journal",
 ] as const;
 
 /** Only these types participate in the kanban workflow */
@@ -66,9 +83,35 @@ export function getPriorityLevel(importance: number) {
   return PRIORITY_LEVELS.find((p) => importance >= p.min) ?? PRIORITY_LEVELS[PRIORITY_LEVELS.length - 1];
 }
 
+/** Returns the gateway-parsed reference/bookmark fields, or null for plain thoughts. */
+export function getParsedReference(thought: Thought): ParsedReference | null {
+  const parsed = (thought.metadata as { parsed?: ParsedReference } | undefined)?.parsed;
+  return parsed && typeof parsed === "object" ? parsed : null;
+}
+
+/** Human-facing label for a raw type enum: "person_note" → "Person note". */
+export function prettifyType(type: string): string {
+  const spaced = type.replace(/_/g, " ");
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/** Emoji per capture type, mirroring Andrew's Slack taxonomy. */
+export const TYPE_EMOJI: Record<string, string> = {
+  task: "📋",
+  person_note: "👤",
+  note: "👤",
+  reference: "📚",
+  idea: "💡",
+  observation: "👀",
+  commitment: "🤝",
+  decision: "🎯",
+  question: "❓",
+  bookmark: "🔖",
+};
+
 export interface Reflection {
   id: number;
-  thought_id: number;
+  thought_id: string;
   trigger_context: string;
   options: unknown[];
   factors: unknown[];
@@ -107,8 +150,8 @@ export interface StatsResponse {
 }
 
 export interface DuplicatePair {
-  thought_id_a: number;
-  thought_id_b: number;
+  thought_id_a: string;
+  thought_id_b: string;
   similarity: number;
   content_a: string;
   content_b: string;
@@ -166,7 +209,7 @@ export type AddToBrainMode = "auto" | "single" | "extract";
 
 export interface AddToBrainResult {
   path: "single" | "extract";
-  thought_id?: number;
+  thought_id?: string;
   job_id?: number;
   type?: string;
   status?: string;
