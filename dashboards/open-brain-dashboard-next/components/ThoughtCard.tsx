@@ -1,29 +1,96 @@
 import Link from "next/link";
 import type { Thought } from "@/lib/types";
+import { getParsedReference, TYPE_EMOJI, prettifyType } from "@/lib/types";
 import { FormattedDate } from "@/components/FormattedDate";
 
-const typeColors: Record<string, string> = {
-  idea: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  task: "bg-blue-500/15 text-blue-400 border-blue-500/20",
-  person_note: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  reference: "bg-slate-500/15 text-slate-400 border-slate-500/20",
-  decision: "bg-violet/15 text-violet border-violet/20",
-  commitment: "bg-teal-500/15 text-teal-400 border-teal-500/20",
-  question: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20",
-  bookmark: "bg-indigo-500/15 text-indigo-400 border-indigo-500/20",
-  lesson: "bg-orange-500/15 text-orange-400 border-orange-500/20",
-  meeting: "bg-cyan-500/15 text-cyan-400 border-cyan-500/20",
-  journal: "bg-pink-500/15 text-pink-400 border-pink-500/20",
-};
+// Editorial system = one accent. The per-type emoji carries the signal; the
+// chip stays a single neutral ink tint so the screen reads as one brand.
+const BADGE_CLASS =
+  "bg-bg-elevated text-text-secondary border-border-subtle";
 
 export function TypeBadge({ type }: { type: string }) {
-  const colors = typeColors[type] || typeColors.reference;
+  const emoji = TYPE_EMOJI[type];
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${colors}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-xs font-medium border ${BADGE_CLASS}`}
     >
-      {type}
+      {emoji && <span aria-hidden>{emoji}</span>}
+      {prettifyType(type)}
     </span>
+  );
+}
+
+/**
+ * Clean, clickable reference / bookmark card built from the gateway-parsed
+ * fields (title → url, author · source, summary, why-saved chip, unread badge).
+ */
+export function ReferenceCard({ thought }: { thought: Thought }) {
+  const ref = getParsedReference(thought)!;
+  const title = ref.title || ref.url || "(untitled reference)";
+  const byline = [ref.author, ref.source].filter(Boolean).join(" · ");
+
+  return (
+    <div className="bg-bg-surface border border-border-subtle rounded-sm p-4 transition-[border-color,box-shadow] duration-150 hover:border-border hover:shadow-sm">
+      <div className="flex items-start justify-between gap-3 mb-1.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <TypeBadge type={thought.type} />
+          {ref.kind === "bookmark" && ref.unread && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-bg-elevated text-text-secondary border border-border-subtle">
+              unread
+            </span>
+          )}
+        </div>
+        <FormattedDate
+          date={thought.created_at}
+          className="text-xs text-text-muted whitespace-nowrap"
+        />
+      </div>
+
+      {ref.url ? (
+        <a
+          href={ref.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-sm font-medium text-text-primary hover:text-violet transition-colors break-words"
+        >
+          {title}
+        </a>
+      ) : (
+        <span className="block text-sm font-medium text-text-primary break-words">
+          {title}
+        </span>
+      )}
+
+      {byline && (
+        <p className="text-xs text-text-muted mt-0.5">{byline}</p>
+      )}
+
+      {ref.summary && (
+        <p className="text-sm text-text-secondary leading-relaxed mt-2">
+          {ref.summary}
+        </p>
+      )}
+
+      <div className="flex items-center gap-2 flex-wrap mt-2">
+        {ref.why_saved && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-violet-surface text-violet text-xs">
+            💡 {ref.why_saved}
+          </span>
+        )}
+        {ref.published && (
+          <span className="text-xs text-text-muted">{ref.published}</span>
+        )}
+        {ref.file && (
+          <span className="text-xs text-text-muted">📎 {ref.file}</span>
+        )}
+        <Link
+          href={`/thoughts/${thought.id}`}
+          className="text-xs text-text-muted hover:text-violet transition-colors ml-auto"
+        >
+          details →
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -34,30 +101,23 @@ export function ThoughtCard({
   thought: Thought;
   showLink?: boolean;
 }) {
+  // Reference and bookmark captures render as structured cards.
+  if (getParsedReference(thought)) {
+    return <ReferenceCard thought={thought} />;
+  }
+
   const preview =
     thought.content.length > 200
       ? thought.content.slice(0, 200) + "..."
       : thought.content;
 
   const inner = (
-    <div className="bg-bg-surface border border-border rounded-lg p-4 hover:border-violet/30 transition-colors">
+    <div className="bg-bg-surface border border-border-subtle rounded-sm p-4 transition-[border-color,box-shadow] duration-150 hover:border-border hover:shadow-sm">
       <div className="flex items-start justify-between gap-3 mb-2">
-        <div className="flex items-center gap-2">
-          <TypeBadge type={thought.type} />
-          {thought.importance > 0 && (
-            <span className="text-xs text-text-muted">
-              imp: {thought.importance}
-            </span>
-          )}
-        </div>
+        <TypeBadge type={thought.type} />
         <FormattedDate date={thought.created_at} className="text-xs text-text-muted whitespace-nowrap" />
       </div>
       <p className="text-sm text-text-secondary leading-relaxed">{preview}</p>
-      {thought.source_type && (
-        <span className="inline-block mt-2 text-xs text-text-muted">
-          {thought.source_type}
-        </span>
-      )}
     </div>
   );
 
