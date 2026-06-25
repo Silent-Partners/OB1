@@ -23,6 +23,18 @@ function headers(apiKey: string): HeadersInit {
   };
 }
 
+/**
+ * Validate an id before it is interpolated into a request URL. Thought ids are
+ * uuids; constraining to a safe character allowlist closes the SSRF /
+ * path-injection vector CodeQL flags (js/request-forgery) on the fetch sinks.
+ */
+function safeId(id: string): string {
+  if (typeof id !== "string" || !/^[A-Za-z0-9_-]+$/.test(id)) {
+    throw new ApiError(`Invalid id`, 400);
+  }
+  return id;
+}
+
 async function apiFetch<T>(
   apiKey: string,
   path: string,
@@ -95,7 +107,7 @@ export async function fetchThought(
   excludeRestricted: boolean = true
 ): Promise<Thought> {
   const qs = excludeRestricted ? "" : "?exclude_restricted=false";
-  return apiFetch<Thought>(apiKey, `/thought/${id}${qs}`);
+  return apiFetch<Thought>(apiKey, `/thought/${safeId(id)}${qs}`);
 }
 
 export async function updateThought(
@@ -105,7 +117,7 @@ export async function updateThought(
 ): Promise<{ id: string; action: string; message: string }> {
   return apiFetch<{ id: string; action: string; message: string }>(
     apiKey,
-    `/thought/${id}`,
+    `/thought/${safeId(id)}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
@@ -156,7 +168,7 @@ export async function deleteThought(
   apiKey: string,
   id: string
 ): Promise<void> {
-  const url = `${API_URL}/thought/${id}`;
+  const url = `${API_URL}/thought/${safeId(id)}`;
   const res = await fetch(url, {
     method: "DELETE",
     headers: headers(apiKey),
@@ -228,7 +240,7 @@ export async function fetchReflections(
 ): Promise<Reflection[]> {
   const data = await apiFetch<{ reflections: Reflection[] }>(
     apiKey,
-    `/thought/${thoughtId}/reflection`
+    `/thought/${safeId(thoughtId)}/reflection`
   );
   return data.reflections;
 }
