@@ -13,9 +13,6 @@ const TYPES = [
   "commitment",
   "question",
   "bookmark",
-  "lesson",
-  "meeting",
-  "journal",
 ];
 
 const IMPORTANCE_OPTIONS = [1, 2, 3, 4, 5];
