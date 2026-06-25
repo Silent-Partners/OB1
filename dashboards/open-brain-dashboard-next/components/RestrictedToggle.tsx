@@ -21,9 +21,6 @@ export function RestrictedToggle() {
       .catch(() => {});
   }, []);
 
-  // Don't render if restricted content feature is not configured
-  if (!configured) return null;
-
   const handleUnlock = useCallback(async () => {
     if (!passphrase.trim()) return;
     setLoading(true);
@@ -62,20 +59,24 @@ export function RestrictedToggle() {
     }
   }, []);
 
+  // Don't render if restricted content feature is not configured.
+  // Placed after all hooks so hook order stays stable across renders.
+  if (!configured) return null;
+
   return (
     <>
       {/* Lock/unlock button */}
       <button
         onClick={() => (unlocked ? handleLock() : setShowModal(true))}
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors w-full ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-sm text-xs font-medium transition-colors w-full ${
           unlocked
-            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20"
+            ? "bg-warning/10 text-warning border border-warning/20 hover:bg-warning/20"
             : "text-text-muted hover:text-text-secondary hover:bg-bg-hover"
         }`}
         title={unlocked ? "Click to hide restricted content" : "Unlock restricted content"}
       >
         {unlocked ? (
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-amber-400">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-warning">
             <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
             <path d="M5 7V5a3 3 0 016 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
@@ -90,8 +91,8 @@ export function RestrictedToggle() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-bg-surface border border-border rounded-xl p-6 w-full max-w-sm shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40">
+          <div className="bg-bg-surface border border-border rounded-sm p-6 w-full max-w-sm shadow-lg">
             <h3 className="text-lg font-semibold text-text-primary mb-1">
               Unlock Restricted Content
             </h3>
@@ -106,7 +107,7 @@ export function RestrictedToggle() {
               onKeyDown={(e) => e.key === "Enter" && handleUnlock()}
               placeholder="Passphrase"
               autoFocus
-              className="w-full px-4 py-2.5 bg-bg-elevated border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition mb-3"
+              className="w-full px-4 py-2.5 bg-bg-elevated border border-border rounded-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition mb-3"
             />
 
             {error && <p className="text-danger text-sm mb-3">{error}</p>}
@@ -125,7 +126,7 @@ export function RestrictedToggle() {
               <button
                 onClick={handleUnlock}
                 disabled={loading || !passphrase.trim()}
-                className="px-4 py-2 text-sm bg-violet hover:bg-violet-dim text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-violet hover:bg-violet-dim text-white font-medium rounded-sm transition-colors disabled:opacity-50"
               >
                 {loading ? "Verifying..." : "Unlock"}
               </button>

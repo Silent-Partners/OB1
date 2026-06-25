@@ -1,53 +1,161 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   Silent Partners — editorial design system
+   Tokens pulled from "Silent Partners Design System Live" (Claude
+   Design) colors_and_type.css. Cream / ink / single green accent,
+   Public Sans body, Source Serif 4 display, square 2px corners.
+   ───────────────────────────────────────────────────────────── */
+
+/* ─── Font faces (Public Sans + Source Serif 4) ─────────────── */
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Thin.ttf") format("truetype"); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-ExtraLight.ttf") format("truetype"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-ExtraLightItalic.ttf") format("truetype"); font-weight: 200; font-style: italic; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Light.ttf") format("truetype"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Italic.ttf") format("truetype"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Medium.ttf") format("truetype"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-SemiBold.ttf") format("truetype"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Black.ttf") format("truetype"); font-weight: 900; font-style: normal; font-display: swap; }
+
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-ExtraLight.ttf") format("truetype"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-ExtraLightItalic.ttf") format("truetype"); font-weight: 200; font-style: italic; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-Light.ttf") format("truetype"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-LightItalic.ttf") format("truetype"); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-Italic.ttf") format("truetype"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-SemiBold.ttf") format("truetype"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("/fonts/SourceSerif4-BoldItalic.ttf") format("truetype"); font-weight: 700; font-style: italic; font-display: swap; }
+
 @theme inline {
-  --color-bg-primary: #0a0a0f;
-  --color-bg-surface: #111118;
-  --color-bg-elevated: #1a1a24;
-  --color-bg-hover: #222230;
-  --color-border: #2a2a3a;
-  --color-border-subtle: #1e1e2e;
-  --color-text-primary: #e8e8ef;
-  --color-text-secondary: #9090a8;
-  --color-text-muted: #606078;
-  --color-violet: #8b5cf6;
-  --color-violet-dim: #7c3aed;
-  --color-violet-glow: rgba(139, 92, 246, 0.15);
-  --color-violet-surface: rgba(139, 92, 246, 0.08);
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
-  --color-info: #60a5fa;
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  /* Surfaces — cream, not dark.
+     OB semantic names kept so existing utilities re-skin automatically. */
+  --color-bg-primary: #f8f6f0;   /* page background (cream) */
+  --color-bg-surface: #fefdf9;   /* cards (paper) */
+  --color-bg-elevated: #ede9e0;  /* inset / elevated (cream-dark) */
+  --color-bg-hover: #ede9e0;     /* hover */
+  --color-border: rgba(17, 17, 16, 0.15);        /* thin neutral rule */
+  --color-border-subtle: rgba(17, 17, 16, 0.08); /* hairline */
+
+  /* Text — ink */
+  --color-text-primary: #111110;                 /* ink */
+  --color-text-secondary: rgba(17, 17, 16, 0.70);
+  --color-text-muted: #6b6b67;                   /* ink-muted */
+
+  /* Accent collapse — ONE accent: brand green. (Names retained.) */
+  --color-violet: #1a6b3c;                        /* green */
+  --color-violet-dim: #164f2d;                    /* green-dark (hover/press) */
+  --color-violet-glow: rgba(26, 107, 60, 0.15);   /* selection */
+  --color-violet-surface: rgba(26, 107, 60, 0.08);/* tinted bg */
+
+  /* Functional */
+  --color-success: #1a6b3c;
+  --color-warning: #7a5c1e;
+  --color-danger: #8b2020;
+  --color-info: #7096a4;   /* secondary blue — charts only, not chrome */
+
+  /* SP primitives exposed as utilities (bg-ink, text-green, etc.) */
+  --color-ink: #111110;
+  --color-ink-mid: #3a3a38;
+  --color-ink-muted: #6b6b67;
+  --color-ink-ghost: #a8a8a4;
+  --color-cream: #f8f6f0;
+  --color-cream-dark: #ede9e0;
+  --color-cream-darker: #e0ddd4;
+  --color-paper: #fefdf9;
+  --color-green: #1a6b3c;
+  --color-green-dark: #164f2d;
+  --color-green-mid: #2e8a52;
+  --color-green-light: #d6eae0;
+  --color-blue: #7096a4;
+  --color-blue-pale: #e4e9ec;
+
+  /* Type */
+  --font-sans: "Public Sans", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: var(--font-roboto-mono), ui-monospace, monospace;
+
+  /* Radius — square brand. Tame existing rounded-* utilities. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+
+  /* Elevation — flat. Subtle shadows only for real elevation. */
+  --shadow-sm: 0 1px 3px rgba(17, 17, 16, 0.06), 0 1px 2px rgba(17, 17, 16, 0.04);
+  --shadow-md: 0 4px 12px rgba(17, 17, 16, 0.08), 0 2px 4px rgba(17, 17, 16, 0.04);
+  --shadow-lg: 0 12px 32px rgba(17, 17, 16, 0.10), 0 4px 8px rgba(17, 17, 16, 0.04);
 }
 
 body {
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Editorial overline — 12px Public Sans 600 uppercase, wide tracking. */
+.type-overline {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+/* Thin editorial rules. */
+.rule-top { border-top: 1px solid var(--color-ink); }
+.rule-bottom { border-bottom: 1px solid var(--color-ink); }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
+  background: var(--color-cream-darker);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: var(--color-ink-ghost);
 }
 
 /* Selection */
 ::selection {
   background: var(--color-violet-glow);
   color: var(--color-text-primary);
+}
+
+/* Accessible keyboard focus — one consistent green ring across the app.
+   Mouse clicks don't trigger it; only keyboard / programmatic focus does. */
+:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Editorial masthead rule — heavier than a hairline, the page's strongest line. */
+.rule-masthead { border-bottom: 1.5px solid var(--color-ink); }
+
+/* Reduced motion: collapse all transitions/animations to near-instant.
+   Satisfies the brand rule that every motion has a still alternative. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Phone landscape: hide desktop sidebar, keep mobile topbar, remove sidebar margin */

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import type { Thought, KanbanStatus } from "@/lib/types";
@@ -20,12 +20,25 @@ function collapseKey(status: string): string {
   return `kanban-${status}-collapsed`;
 }
 
+// Event fired on same-tab collapse toggles so useSyncExternalStore re-reads
+// localStorage (the native "storage" event only fires in other tabs).
+const COLLAPSE_EVENT = "kanban-collapse-change";
+
+function subscribeToCollapse(callback: () => void) {
+  window.addEventListener(COLLAPSE_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(COLLAPSE_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
 interface KanbanColumnProps {
   status: string;
   thoughts: Thought[];
   onCardClick: (thought: Thought) => void;
-  onPriorityChange: (thoughtId: number, importance: number) => void;
-  onArchive: (thoughtId: number) => void;
+  onPriorityChange: (thoughtId: string, importance: number) => void;
+  onArchive: (thoughtId: string) => void;
 }
 
 export function KanbanColumn({
@@ -35,19 +48,22 @@ export function KanbanColumn({
   onPriorityChange,
   onArchive,
 }: KanbanColumnProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const key = collapseKey(status);
 
-  // Load collapse state from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem(collapseKey(status));
-    if (stored === "true") setIsCollapsed(true);
-  }, [status]);
+  // Read collapse state straight from localStorage. useSyncExternalStore keeps
+  // SSR/hydration safe: the server snapshot is always false (expanded), and the
+  // client snapshot reads localStorage after hydration — no setState-in-effect.
+  const isCollapsed = useSyncExternalStore(
+    subscribeToCollapse,
+    () => localStorage.getItem(key) === "true",
+    () => false,
+  );
 
-  function toggleCollapse() {
-    const nextState = !isCollapsed;
-    setIsCollapsed(nextState);
-    localStorage.setItem(collapseKey(status), String(nextState));
-  }
+  const toggleCollapse = useCallback(() => {
+    const nextState = !(localStorage.getItem(key) === "true");
+    localStorage.setItem(key, String(nextState));
+    window.dispatchEvent(new Event(COLLAPSE_EVENT));
+  }, [key]);
 
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const accentClass = COLUMN_ACCENT[status] || COLUMN_ACCENT.new;

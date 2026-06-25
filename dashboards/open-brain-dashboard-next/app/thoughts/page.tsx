@@ -8,17 +8,15 @@ import { FormattedDate } from "@/components/FormattedDate";
 export const dynamic = "force-dynamic";
 
 const TYPES = [
-  "idea",
   "task",
-  "person_note",
   "reference",
-  "decision",
-  "commitment",
-  "question",
+  "person_note",
+  "idea",
   "bookmark",
-  "lesson",
-  "meeting",
-  "journal",
+  "commitment",
+  "decision",
+  "question",
+  "observation",
 ];
 
 export default async function ThoughtsPage({
@@ -50,7 +48,7 @@ export default async function ThoughtsPage({
   } catch (err) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Thoughts</h1>
+        <h1 className="font-serif font-light text-3xl tracking-tight">Thoughts</h1>
         <p className="text-danger text-sm">
           Failed to load thoughts.{" "}
           {err instanceof Error ? err.message : ""}
@@ -73,8 +71,13 @@ export default async function ThoughtsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold mb-1">Thoughts</h1>
-        <p className="text-text-secondary text-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet mb-2">
+          Archive
+        </p>
+        <h1 className="font-serif font-light text-3xl tracking-tight text-text-primary">
+          Thoughts
+        </h1>
+        <p className="text-text-secondary text-sm mt-1">
           {data.total.toLocaleString()} total thoughts
         </p>
       </div>
@@ -88,7 +91,7 @@ export default async function ThoughtsPage({
       />
 
       {/* Table */}
-      <div className="bg-bg-surface border border-border rounded-lg overflow-hidden">
+      <div className="bg-bg-surface border border-border rounded-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
@@ -137,7 +140,7 @@ export default async function ThoughtsPage({
             {page > 1 && (
               <Link
                 href={pageUrl(page - 1)}
-                className="px-3 py-1.5 text-sm bg-bg-elevated border border-border rounded-lg text-text-secondary hover:bg-bg-hover transition-colors"
+                className="px-3 py-1.5 text-sm bg-bg-elevated border border-border rounded-sm text-text-secondary hover:bg-bg-hover transition-colors"
               >
                 Previous
               </Link>
@@ -145,7 +148,7 @@ export default async function ThoughtsPage({
             {page < totalPages && (
               <Link
                 href={pageUrl(page + 1)}
-                className="px-3 py-1.5 text-sm bg-bg-elevated border border-border rounded-lg text-text-secondary hover:bg-bg-hover transition-colors"
+                className="px-3 py-1.5 text-sm bg-bg-elevated border border-border rounded-sm text-text-secondary hover:bg-bg-hover transition-colors"
               >
                 Next
               </Link>

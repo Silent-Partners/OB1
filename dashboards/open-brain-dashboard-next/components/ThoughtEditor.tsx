@@ -13,9 +13,6 @@ const TYPES = [
   "commitment",
   "question",
   "bookmark",
-  "lesson",
-  "meeting",
-  "journal",
 ];
 
 const IMPORTANCE_OPTIONS = [1, 2, 3, 4, 5];
@@ -32,7 +29,7 @@ export function ThoughtEditor({
 
   if (!editing) {
     return (
-      <div className="bg-bg-surface border border-border rounded-lg p-5">
+      <div className="bg-bg-surface border border-border rounded-sm p-5">
         <div className="flex justify-between items-start mb-3">
           <h2 className="text-sm font-medium text-text-muted uppercase tracking-wider">
             Content
@@ -58,13 +55,13 @@ export function ThoughtEditor({
         setEditing(false);
         router.refresh();
       }}
-      className="bg-bg-surface border border-violet/30 rounded-lg p-5 space-y-4"
+      className="bg-bg-surface border border-violet/30 rounded-sm p-5 space-y-4"
     >
       <textarea
         name="content"
         defaultValue={thought.content}
         rows={8}
-        className="w-full bg-bg-elevated border border-border rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition resize-y"
+        className="w-full bg-bg-elevated border border-border rounded-sm px-4 py-3 text-text-primary focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet/30 transition resize-y"
       />
       <div className="flex gap-4">
         <div>
@@ -72,7 +69,7 @@ export function ThoughtEditor({
           <select
             name="type"
             defaultValue={thought.type}
-            className="bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-violet"
+            className="bg-bg-elevated border border-border rounded-sm px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-violet"
           >
             {TYPES.map((t) => (
               <option key={t} value={t}>
@@ -90,7 +87,7 @@ export function ThoughtEditor({
             defaultValue={String(
               Math.min(Math.max(thought.importance || 3, 1), 5)
             )}
-            className="bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text-primary w-20 focus:outline-none focus:border-violet"
+            className="bg-bg-elevated border border-border rounded-sm px-3 py-2 text-sm text-text-primary w-20 focus:outline-none focus:border-violet"
           >
             {IMPORTANCE_OPTIONS.map((level) => (
               <option key={level} value={level}>
@@ -103,14 +100,14 @@ export function ThoughtEditor({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium bg-violet hover:bg-violet-dim text-white rounded-lg transition-colors"
+          className="px-4 py-2 text-sm font-medium bg-violet hover:bg-violet-dim text-white rounded-sm transition-colors"
         >
           Save
         </button>
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="px-4 py-2 text-sm font-medium text-text-secondary bg-bg-elevated border border-border rounded-lg hover:bg-bg-hover transition-colors"
+          className="px-4 py-2 text-sm font-medium text-text-secondary bg-bg-elevated border border-border rounded-sm hover:bg-bg-hover transition-colors"
         >
           Cancel
         </button>

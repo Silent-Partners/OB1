@@ -7,10 +7,8 @@ import { RestrictedToggle } from "@/components/RestrictedToggle";
 const nav = [
   { href: "/", label: "Dashboard", icon: DashboardIcon },
   { href: "/thoughts", label: "Thoughts", icon: ThoughtsIcon },
-  { href: "/kanban", label: "Workflow", icon: KanbanIcon },
+  { href: "/references", label: "References", icon: ReferencesIcon },
   { href: "/search", label: "Search", icon: SearchIcon },
-  { href: "/audit", label: "Audit", icon: AuditIcon },
-  { href: "/duplicates", label: "Duplicates", icon: DuplicatesIcon },
   { href: "/ingest", label: "Add", icon: AddIcon },
 ];
 
@@ -33,7 +31,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     >
       <div className="px-5 py-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2.5" onClick={onClose}>
-          <div className="w-8 h-8 rounded-lg bg-violet flex items-center justify-center">
+          <div className="w-8 h-8 rounded-sm bg-violet flex items-center justify-center">
             <span className="text-white text-sm font-bold">OB</span>
           </div>
           <span className="text-text-primary font-semibold text-lg tracking-tight">
@@ -51,10 +49,10 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               key={href}
               href={href}
               onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-sm transition-colors ${
                 active
-                  ? "bg-violet-surface text-violet border border-violet/20"
-                  : "text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+                  ? "bg-violet-surface text-text-primary font-semibold"
+                  : "text-text-secondary font-medium hover:text-text-primary hover:bg-bg-hover"
               }`}
             >
               <Icon active={active} />
@@ -107,29 +105,11 @@ function SearchIcon({ active }: { active: boolean }) {
   );
 }
 
-function AuditIcon({ active }: { active: boolean }) {
+function ReferencesIcon({ active }: { active: boolean }) {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={active ? "text-violet" : "text-text-muted"}>
-      <path d="M9 1.5L2 5v4c0 4.4 3 8.5 7 9.5 4-1 7-5.1 7-9.5V5L9 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function DuplicatesIcon({ active }: { active: boolean }) {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={active ? "text-violet" : "text-text-muted"}>
-      <rect x="1" y="3" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="6" y="4" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" fill="var(--bg-surface)" />
-    </svg>
-  );
-}
-
-function KanbanIcon({ active }: { active: boolean }) {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={active ? "text-violet" : "text-text-muted"}>
-      <rect x="1" y="2" width="4" height="14" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="7" y="2" width="4" height="10" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="13" y="2" width="4" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3 2.5h7a2 2 0 0 1 2 2V16l-4-2-4 2V2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M12 4.5h3v9.5l-2-1" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 }

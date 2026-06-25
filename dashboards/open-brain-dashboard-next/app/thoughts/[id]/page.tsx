@@ -3,15 +3,12 @@ import {
   fetchThought,
   updateThought,
   deleteThought,
-  fetchReflections,
   ApiError,
 } from "@/lib/api";
 import { requireSessionOrRedirect, getSession } from "@/lib/auth";
 import { TypeBadge } from "@/components/ThoughtCard";
 import { ThoughtEditor } from "@/components/ThoughtEditor";
 import { ThoughtDeleteButton } from "@/components/ThoughtDeleteButton";
-import { ReflectionComposer } from "@/components/ReflectionComposer";
-import { ConnectionsPanel } from "@/components/ConnectionsPanel";
 import { FormattedDate } from "@/components/FormattedDate";
 import Link from "next/link";
 
@@ -25,9 +22,7 @@ export default async function ThoughtDetailPage({
   const { apiKey } = await requireSessionOrRedirect();
   const session = await getSession();
   const excludeRestricted = !session.restrictedUnlocked;
-  const { id } = await params;
-  const thoughtId = parseInt(id, 10);
-  if (isNaN(thoughtId)) notFound();
+  const { id: thoughtId } = await params;
 
   let thought;
   try {
@@ -37,13 +32,13 @@ export default async function ThoughtDetailPage({
       return (
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
           <div className="text-4xl">🔒</div>
-          <h1 className="text-xl font-semibold text-text-primary">Restricted Content</h1>
+          <h1 className="font-serif font-light text-2xl tracking-tight text-text-primary">Restricted Content</h1>
           <p className="text-text-secondary text-sm text-center max-w-md">
             This thought is classified as restricted. Unlock restricted content using the lock icon in the sidebar to view it.
           </p>
           <Link
             href="/thoughts"
-            className="px-4 py-2 bg-violet hover:bg-violet-dim text-white text-sm rounded-lg transition-colors"
+            className="px-4 py-2 bg-violet hover:bg-violet-dim text-white text-sm rounded-sm transition-colors"
           >
             Back to Thoughts
           </Link>
@@ -51,13 +46,6 @@ export default async function ThoughtDetailPage({
       );
     }
     notFound();
-  }
-
-  let reflections: Awaited<ReturnType<typeof fetchReflections>> = [];
-  try {
-    reflections = await fetchReflections(apiKey, thoughtId);
-  } catch {
-    reflections = [];
   }
 
   const meta = thought.metadata || {};
@@ -88,7 +76,7 @@ export default async function ThoughtDetailPage({
           <div className="flex items-center gap-3 mb-2 flex-wrap">
             <TypeBadge type={thought.type} />
             {thought.status && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-violet/15 text-violet border-violet/20">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium border bg-violet/15 text-violet border-violet/20">
                 {thought.status}
               </span>
             )}
@@ -127,8 +115,8 @@ export default async function ThoughtDetailPage({
       {(topics.length > 0 ||
         tags.length > 0 ||
         Object.keys(meta).length > 0) && (
-        <div className="bg-bg-surface border border-border rounded-lg p-5">
-          <h3 className="text-sm font-medium text-text-primary mb-3">
+        <div className="bg-bg-surface border border-border rounded-sm p-5">
+          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-text-muted pb-2 mb-3 border-b border-border">
             Metadata
           </h3>
           {topics.length > 0 && (
@@ -138,7 +126,7 @@ export default async function ThoughtDetailPage({
                 {topics.map((t) => (
                   <span
                     key={t}
-                    className="px-2 py-0.5 rounded bg-violet-surface text-violet text-xs"
+                    className="px-2 py-0.5 rounded-sm bg-violet-surface text-violet text-xs"
                   >
                     {t}
                   </span>
@@ -153,7 +141,7 @@ export default async function ThoughtDetailPage({
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="px-2 py-0.5 rounded bg-bg-elevated text-text-secondary text-xs"
+                    className="px-2 py-0.5 rounded-sm bg-bg-elevated text-text-secondary text-xs"
                   >
                     {t}
                   </span>
@@ -172,46 +160,6 @@ export default async function ThoughtDetailPage({
         </div>
       )}
 
-      {/* Connections */}
-      <ConnectionsPanel
-        thoughtId={thought.id}
-        hasMetadata={
-          topics.length > 0 ||
-          ((meta.people as string[]) || []).length > 0
-        }
-      />
-
-      {/* Reflections */}
-      {reflections.length > 0 && (
-        <div>
-          <h3 className="text-lg font-medium mb-3">Reflections</h3>
-          <div className="space-y-3">
-            {reflections.map((r) => (
-              <div
-                key={r.id}
-                className="bg-bg-surface border border-border rounded-lg p-4"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs text-violet font-medium">
-                    {r.reflection_type}
-                  </span>
-                  <span className="text-xs text-text-muted">
-                    Confidence: {(r.confidence * 100).toFixed(0)}%
-                  </span>
-                </div>
-                <p className="text-sm text-text-secondary">{r.conclusion}</p>
-                {r.trigger_context && (
-                  <p className="text-xs text-text-muted mt-2">
-                    Trigger: {r.trigger_context}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <ReflectionComposer thoughtId={thought.id} />
     </div>
   );
 }

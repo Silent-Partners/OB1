@@ -73,11 +73,11 @@ export function DeleteModal({
       className="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-ink/40"
         aria-hidden="true"
         onClick={onCancel}
       />
-      <div className="relative bg-bg-surface border border-border rounded-xl p-6 w-full max-w-md shadow-2xl">
+      <div className="relative bg-bg-surface border border-border rounded-sm p-6 w-full max-w-md shadow-lg">
         <h3
           id={titleId}
           className="text-lg font-semibold text-text-primary mb-2"
@@ -91,14 +91,14 @@ export function DeleteModal({
           <button
             ref={cancelRef}
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-text-secondary bg-bg-elevated border border-border rounded-lg hover:bg-bg-hover transition-colors"
+            className="px-4 py-2 text-sm font-medium text-text-secondary bg-bg-elevated border border-border rounded-sm hover:bg-bg-hover transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={confirming}
-            className="px-4 py-2 text-sm font-medium text-white bg-danger/80 hover:bg-danger rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-white bg-danger/80 hover:bg-danger rounded-sm transition-colors disabled:opacity-50"
           >
             {confirming ? "Deleting..." : "Delete"}
           </button>

@@ -26,7 +26,7 @@ export function SidebarShell() {
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-black/60"
+          className="md:hidden fixed inset-0 z-40 bg-ink/40"
           onClick={() => setIsOpen(false)}
         />
       )}

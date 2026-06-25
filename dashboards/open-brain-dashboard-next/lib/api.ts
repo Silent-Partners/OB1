@@ -23,6 +23,18 @@ function headers(apiKey: string): HeadersInit {
   };
 }
 
+/**
+ * Validate an id before it is interpolated into a request URL. Thought ids are
+ * uuids; constraining to a safe character allowlist closes the SSRF /
+ * path-injection vector CodeQL flags (js/request-forgery) on the fetch sinks.
+ */
+function safeId(id: string): string {
+  if (typeof id !== "string" || !/^[A-Za-z0-9_-]+$/.test(id)) {
+    throw new ApiError(`Invalid id`, 400);
+  }
+  return id;
+}
+
 async function apiFetch<T>(
   apiKey: string,
   path: string,
@@ -71,23 +83,41 @@ export async function fetchThoughts(
   return apiFetch<BrowseResponse>(apiKey, `/thoughts${qs ? `?${qs}` : ""}`);
 }
 
+export interface ReferencesResponse {
+  data: Thought[];
+  total: number;
+}
+
+/**
+ * Fetch reference + bookmark captures as gateway-parsed cards.
+ * Each Thought carries structured fields at `metadata.parsed` (see getParsedReference).
+ */
+export async function fetchReferences(
+  apiKey: string,
+  opts?: { includeBookmarks?: boolean }
+): Promise<ReferencesResponse> {
+  const qs =
+    opts?.includeBookmarks === false ? "?include_bookmarks=false" : "";
+  return apiFetch<ReferencesResponse>(apiKey, `/references${qs}`);
+}
+
 export async function fetchThought(
   apiKey: string,
-  id: number,
+  id: string,
   excludeRestricted: boolean = true
 ): Promise<Thought> {
   const qs = excludeRestricted ? "" : "?exclude_restricted=false";
-  return apiFetch<Thought>(apiKey, `/thought/${id}${qs}`);
+  return apiFetch<Thought>(apiKey, `/thought/${safeId(id)}${qs}`);
 }
 
 export async function updateThought(
   apiKey: string,
-  id: number,
+  id: string,
   data: { content?: string; type?: string; importance?: number; status?: string | null }
-): Promise<{ id: number; action: string; message: string }> {
-  return apiFetch<{ id: number; action: string; message: string }>(
+): Promise<{ id: string; action: string; message: string }> {
+  return apiFetch<{ id: string; action: string; message: string }>(
     apiKey,
-    `/thought/${id}`,
+    `/thought/${safeId(id)}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
@@ -136,9 +166,9 @@ export async function fetchDuplicates(
 
 export async function deleteThought(
   apiKey: string,
-  id: number
+  id: string
 ): Promise<void> {
-  const url = `${API_URL}/thought/${id}`;
+  const url = `${API_URL}/thought/${safeId(id)}`;
   const res = await fetch(url, {
     method: "DELETE",
     headers: headers(apiKey),
@@ -186,7 +216,7 @@ export async function fetchStats(
 }
 
 export interface CaptureResult {
-  thought_id: number;
+  thought_id: string;
   action: string;
   type: string;
   sensitivity_tier: string;
@@ -206,11 +236,11 @@ export async function captureThought(
 
 export async function fetchReflections(
   apiKey: string,
-  thoughtId: number
+  thoughtId: string
 ): Promise<Reflection[]> {
   const data = await apiFetch<{ reflections: Reflection[] }>(
     apiKey,
-    `/thought/${thoughtId}/reflection`
+    `/thought/${safeId(thoughtId)}/reflection`
   );
   return data.reflections;
 }
