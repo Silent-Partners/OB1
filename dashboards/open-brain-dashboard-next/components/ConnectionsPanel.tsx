@@ -27,13 +27,12 @@ export function ConnectionsPanel({
   hasMetadata: boolean;
 }) {
   const [connections, setConnections] = useState<Connection[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Initialize from the prop so the effect never needs a synchronous setState:
+  // nothing to fetch when there's no metadata, so loading starts false.
+  const [loading, setLoading] = useState(hasMetadata);
 
   useEffect(() => {
-    if (!hasMetadata) {
-      setLoading(false);
-      return;
-    }
+    if (!hasMetadata) return;
 
     fetch(`/api/thoughts/${thoughtId}/connections`)
       .then((res) => res.json())
